@@ -1,0 +1,18 @@
+{
+  "name": "exploratory-analysis-system-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "set NODE_ENV=development && pm2 start ./bin/www --name exploratory-dev --watch --no-daemon",
+    "start": "set NODE_ENV=production && pm2 start ./bin/www --name exploratory --log ./log/exploratory/exploratory.log",
+    "restart": "pm2 restart exploratory"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "mongodb": "^3.6.2",
+    "morgan": "~1.9.1",
+    "sequelize": "^6.3.5"
+  }
+}
