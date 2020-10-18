@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 const db = new Sequelize({
     dialect: "mysql",
-    host: "localhost",
+    host: "mysql",
     // port:"3306",
     username: "root",
     password: process.env.MysqlRootPw || '',

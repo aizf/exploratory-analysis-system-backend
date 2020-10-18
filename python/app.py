@@ -1,16 +1,20 @@
 from flask import Flask, request
 from flask_cors import CORS
 import json
-from fp_growth_plus import Fp_growth_plus
+from lib import Fp_growth_plus
 import random
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/', methods=['GET'])
+def index():
+    return "Hello"
 
 
 @app.route('/', methods=['POST'])
 def frequent_item():
     data = request.json
-    print(data)
+    # print(data)
     group = gen_group_X([d['operation'] for d in data])
     res = calc(group)
     return {'data': res}
@@ -57,3 +61,6 @@ def calc(data):
     # print(rule_list)
     res = [[list(d[0]), list(d[1]), d[2], d[3]] for d in rule_list]
     return res
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)

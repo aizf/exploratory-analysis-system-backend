@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  nginx:
+    restart: always
+    image: nginx:alpine
+    # container_name: nginx
+    depends_on:
+      - nodejs
+    ports:
+      # - 80:80
+      # - 443:443
+      - "3000:3000"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./www:/var/www:ro
+      - ./log/nginx:/var/log/nginx
+    environment: 
+      - TZ=Asia/Shanghai
+  mysql:
+    restart: always
+    image: mysql
+    # container_name: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database/conf.d/mysql:/etc/mysql/conf.d
+      - mysql:/var/lib/mysql
+    environment: 
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=$MysqlRootPw
+  mongo:
+    restart: always
+    image: mongo:bionic
+    # container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/data/db
+    environment: 
+      - TZ=Asia/Shanghai
+      # - MONGO_INITDB_ROOT_USERNAME=root
+      # - MONGO_INITDB_ROOT_PASSWORD=root
+  nodejs:
+    restart: always
+    image: node:lts-alpine
+    # image: node:lts
+    # container_name: nodejs
+    depends_on:
+      - mongo
+      - mysql
+    working_dir: /home/node/app
+    user: "node"
+    expose:
+      - "3000"
+    volumes:
+      - ./nodejs:/home/node/app
+    environment: 
+      - NODE_ENV=production
+      - TZ=Asia/Shanghai
+    command: ["node", "./bin/www"]
+  python:
+    restart: always
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    image: mypython
+    environment: 
+      - TZ=Asia/Shanghai
+volumes:
+  mongo:
+  mysql:
