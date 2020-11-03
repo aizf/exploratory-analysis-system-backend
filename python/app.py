@@ -1,66 +1,40 @@
 from flask import Flask, request
 from flask_cors import CORS
+from lib import Frequent_item, cluster
 import json
-from lib import Fp_growth_plus
-import random
 app = Flask(__name__)
 CORS(app)
+
 
 @app.route('/', methods=['GET'])
 def index():
     return "Hello"
 
 
-@app.route('/', methods=['POST'])
+@app.route('/frequent_item', methods=['POST'])
 def frequent_item():
     data = request.json
     # print(data)
-    group = gen_group_X([d['operation'] for d in data])
-    res = calc(group)
+    group = Frequent_item.gen_group_X([d['operation'] for d in data])
+    res = Frequent_item.calc(group)
     return {'data': res}
 
 
-def gen_group_X(data):
-    source = data[::-1]
-    group = []
-    while source:
-        g = []
-        n = random.randrange(2, 5)
-        while source and n > 0:
-            g.append(source.pop())
-            n -= 1
-        group.append(g)
-    return group
+@app.route('/cluster', methods=['POST'])
+def cluster_route():
+    data = request.json
+    # print(data["algorithm"], data["params"])
+    nodes = data["nodes"]
+    pred = cluster(data["algorithm"], nodes, data.get("params", {}))
+    # print(pred)
+    res = []
+    for ( i,node) in enumerate(nodes):
+        # print("node", node)
+        # print("pred", pred)
+        res.append({"uid": node["uid"], "group": int(pred[i])})
+    print(res)
+    return {'data': res}
 
-
-def gen_group(data):
-    group = []
-    g = []
-    t = 0
-    wait = 3000
-    for x in sorted(data, key=lambda x: x["time"]):
-        time = x["time"]
-        action = x["action"]
-        if time - t > wait:
-            if g: group.append(g)
-            g = [action]
-        else:
-            g.append(action)
-        t = time
-    if g: group.append(g)
-    return group
-
-
-def calc(data):
-    min_support = 2
-    min_conf = 0.5
-
-    # print(data)
-    fpgp = Fp_growth_plus()
-    rule_list = fpgp.generate_R(data, min_support, min_conf)
-    # print(rule_list)
-    res = [[list(d[0]), list(d[1]), d[2], d[3]] for d in rule_list]
-    return res
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
