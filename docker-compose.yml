@@ -7,7 +7,7 @@ services:
     # container_name: nginx
     depends_on:
       - nodejs
-      - python
+      # - python
     ports:
       # - 80:80
       # - 443:443
@@ -60,14 +60,14 @@ services:
       - NODE_ENV=production
       - TZ=Asia/Shanghai
     command: ["node", "./bin/www"]
-  python:
-    restart: always
-    build:
-      context: ./python
-      dockerfile: Dockerfile
-    image: mypython
-    environment: 
-      - TZ=Asia/Shanghai
+  # python:
+  #   restart: always
+  #   build:
+  #     context: ./python
+  #     dockerfile: Dockerfile
+  #   image: mypython
+  #   environment: 
+  #     - TZ=Asia/Shanghai
 volumes:
   mongo:
   mysql:

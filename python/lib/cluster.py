@@ -23,10 +23,11 @@ algorithms = [("KMeans", KMeans(n_clusters=n_clusters)),
 def getAlgorithm(_name, params, X):
     for (name, algorithm) in algorithms:
         if _name == name:
-            algorithm.set_params(**params)
             if _name == "MeanShift":
-                bandwidth = estimate_bandwidth(X, quantile=0.2)
+                bandwidth = estimate_bandwidth(X, **params)
                 algorithm.set_params(**{"bandwidth": bandwidth})
+            else:
+                algorithm.set_params(**params)
             return algorithm
 
 
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     # print(os.listdir("."))
     import json
     nodes = []
-    with open("./1.json") as f:
+    with open("./test/1.json") as f:
         nodes = json.load(f)
 
     plt.figure(figsize=(12, 12))
