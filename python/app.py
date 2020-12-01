@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
-from lib import Frequent_item, cluster,network_centrality
+from lib import Frequent_item, cluster, network_centrality, communities, save
 import json
 app = Flask(__name__)
 CORS(app)
@@ -40,7 +40,25 @@ def cluster_route():
 def network_centrality_route():
     network = request.json
     # print(data["algorithm"], data["params"])
-    res = network_centrality(network)
+    res, g = network_centrality(network)
+    # print(res[:5], "......")
+    return {'data': res}
+
+
+@app.route('/communities', methods=['POST'])
+def communities_route():
+    network = request.json
+    # print(data["algorithm"], data["params"])
+    res, g = communities(network)
+    # print(res[:5], "......")
+    return {'data': res}
+
+
+@app.route('/save', methods=['POST'])
+def save_route():
+    network = request.json
+    # print(data["algorithm"], data["params"])
+    res = save(network)
     # print(res[:5], "......")
     return {'data': res}
 
